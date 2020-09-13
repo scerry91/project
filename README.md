@@ -51,6 +51,7 @@ Manifest for Node:
     }
 
 Hierra Configuration to get yaml variables:
+/etc/puppetlabs/puppet/hiera.yaml
 
     ---
     :backends:
