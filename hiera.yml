@@ -1,0 +1,9 @@
+#cat /etc/puppetlabs/puppet/hiera.yaml 
+#---
+#:backends:
+#  - yaml
+#:yaml:
+#  :datadir: /etc/puppetlabs/code/environments/production/data
+#:hierarchy:
+#  - common
+

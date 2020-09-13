@@ -1,0 +1,66 @@
+#!/bin/bash
+###########################################################
+# Bash script to clean up the oldest logs from filesystem #
+# How to use:                                             #
+# - Enter log path (wildcard) for example:                #
+#    a) /var/logs/log-*.gzip                              #
+#    b) /var/log/httpd/error-20*.gzip                     #
+# - Enter maximum percentage                              #
+#---------------------------------------------------------#
+# What it does:                                           #
+# - Check if log exists                                   #
+# - Make a loop of all logs                               #
+# - Get the oldest log                                    #
+# - Remove the oldest log                                 #
+#---------------------------------------------------------#
+# Tested on:                                              #
+# - Ubuntu buster/sid                                     #
+# - RedHat 7.7                                            #
+###########################################################
+
+# Log location with wildcard 
+# EXAMPLE:
+# log_directory=/var/logs/log-*.gzip
+log_directory=<%= $log_file['log_directory'] %>
+# What is maximum percentage takes on the system
+# EXAMPLE:
+# max_percentage_taken=95
+max_percentage_taken=<%= $log_file['max_percentage_taken'] %>
+
+# Variable for the loop
+log_directory_for_loop=($log_directory)
+
+while true
+do
+    # Check if logs or directory exsists
+    if [[ -f ${log_directory_for_loop[0]} ]]
+    then
+        # Make a loop of log files
+        for name in $log_directory
+        do
+            # Check how much disk space it is using
+            space_used=$(df -h $(dirname $name) | tail -1 | awk '{ print $5 }' | sed 's/%//g')
+            # Check if we are running out of disk space
+            if [ $space_used -gt $max_percentage_taken ]
+            then
+                # Find the oldest log
+                latest_log_file=$(find $name -type f -printf '%T+\t%p\n' | sort | head -n 1 | awk '{print $2}')
+                echo "Removing $latest_log_file"
+                # Remove the oldest log
+                rm -f $latest_log_file
+                echo "We are using $space_used% out of $max_percentage_taken%"
+            else
+                # Finish if disk space looks ok
+                echo "Disk space looks ok, currently we are using $space_used% out of $max_percentage_taken%"
+                break 2
+            fi
+        done
+    else
+        # Finish if here is no directory or logs to remove
+        echo "There is no logs in $log_directory to remove"
+        # TO DO
+        # SEND AN EMAIL
+        break 2
+    fi
+done
+
