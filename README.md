@@ -49,3 +49,15 @@ Manifest for Node:
       include role::appserver
 
     }
+
+Hierra Configuration to get yaml variables:
+
+    ---
+    :backends:
+      - yaml
+    :yaml:
+      :datadir: /etc/puppetlabs/code/environments/production/data
+    :hierarchy:
+      - common
+
+
