@@ -1,3 +1,6 @@
+# DESCRIPTION
+    Puppet modules to clean up disk space on the system, tested with puppet version "6.18.0"
+   
 # OVERVIEW
     - Create a new group
     - Create n aew user and assign to the group
